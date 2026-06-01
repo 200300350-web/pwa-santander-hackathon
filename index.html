@@ -23,6 +23,35 @@
         const dropText = document.getElementById('drop-text');
         const resultado = document.getElementById('resultado');
 
+        // 1. Mock de datos simulando la extracción de los 6 PDFs
+        const estadosDeCuentaMock = [
+            { mes: 'Mes 1', ingresos: 45000, egresos: 30000 },
+            { mes: 'Mes 2', ingresos: 48000, egresos: 32000 },
+            { mes: 'Mes 3', ingresos: 42000, egresos: 29000 },
+            { mes: 'Mes 4', ingresos: 50000, egresos: 35000 },
+            { mes: 'Mes 5', ingresos: 47000, egresos: 31000 },
+            { mes: 'Mes 6', ingresos: 46000, egresos: 33000 }
+        ];
+
+        // 2. Lógica de evaluación financiera optimizada
+        const evaluarViabilidad = (datos) => {
+            const totales = datos.reduce((acc, mes) => {
+                acc.ingresos += mes.ingresos;
+                acc.egresos += mes.egresos;
+                return acc;
+            }, { ingresos: 0, egresos: 0 });
+
+            const porcentajeGasto = (totales.egresos / totales.ingresos) * 100;
+            const esViable = porcentajeGasto <= 70; // Regla de negocio: Max 70% de endeudamiento
+
+            return {
+                porcentaje: porcentajeGasto.toFixed(1),
+                viable: esViable,
+                ...totales // Spread operator para pasar los ingresos y egresos
+            };
+        };
+
+        // 3. Eventos visuales de la zona de arrastre
         ['dragenter', 'dragover'].forEach(evento => {
             dropZone.addEventListener(evento, (e) => {
                 e.preventDefault();
@@ -39,6 +68,7 @@
             });
         });
 
+        // 4. Captura de archivos y ejecución del dictamen
         dropZone.addEventListener('drop', (e) => {
             const files = Array.from(e.dataTransfer.files);
 
@@ -47,12 +77,42 @@
                 return;
             }
 
-            dropText.innerHTML = `✅ 6 archivos recibidos. <br><span style="font-size: 16px; color: #EC0000;">Procesando datos financieros... ⏳</span>`;
+            dropText.innerHTML = `✅ 6 archivos recibidos. <br><span style="font-size: 16px; color: #EC0000;">Extrayendo y procesando datos con el motor de riesgo... ⏳</span>`;
             
+            // Simulamos el tiempo de lectura de los PDFs y ejecutamos el algoritmo
             setTimeout(() => {
+                const dictamen = evaluarViabilidad(estadosDeCuentaMock);
+                
                 resultado.style.display = 'block';
-                resultado.innerHTML = `<h3>🚀 Interfaz Lista</h3><p>Aquí inyectaremos el JSON y el algoritmo matemático mañana.</p>`;
-            }, 1500);
+                
+                // Renderizado dinámico según el dictamen
+                if(dictamen.viable) {
+                    resultado.style.backgroundColor = '#e6ffe6';
+                    resultado.style.borderColor = '#00cc00';
+                    resultado.innerHTML = `
+                        <h3 style="color: #00cc00;">✅ Crédito PYME Factible</h3>
+                        <p><strong>Nivel de Endeudamiento:</strong> ${dictamen.porcentaje}% (Límite 70%)</p>
+                        <p><strong>Ingresos Semestrales:</strong> $${dictamen.ingresos.toLocaleString()}</p>
+                        <p><strong>Egresos Semestrales:</strong> $${dictamen.egresos.toLocaleString()}</p>
+                        <hr style="border: 0; border-top: 1px solid #ccc; margin: 15px 0;">
+                        <p style="font-size: 14px; color: #555;">Acción: Inicia la conversación en el chat de Salesforce para comunicar la aprobación al cliente.</p>
+                    `;
+                } else {
+                    resultado.style.backgroundColor = '#ffe6e6';
+                    resultado.style.borderColor = '#cc0000';
+                    resultado.innerHTML = `
+                        <h3 style="color: #cc0000;">⚠️ Riesgo Alto - Crédito Rechazado</h3>
+                        <p><strong>Nivel de Endeudamiento:</strong> ${dictamen.porcentaje}% (Supera el límite del 70%)</p>
+                        <p><strong>Ingresos Semestrales:</strong> $${dictamen.ingresos.toLocaleString()}</p>
+                        <p><strong>Egresos Semestrales:</strong> $${dictamen.egresos.toLocaleString()}</p>
+                        <hr style="border: 0; border-top: 1px solid #ccc; margin: 15px 0;">
+                        <p style="font-size: 14px; color: #555;">Acción: Inicia la conversación en el chat de Salesforce para notificar la declinación.</p>
+                    `;
+                }
+                
+                // Reiniciamos la caja por si quieren subir más PDFs
+                dropText.innerHTML = `📁 Soltar nuevos estados de cuenta...`;
+            }, 2000); // 2 segundos de suspenso falso
         });
     </script>
 
