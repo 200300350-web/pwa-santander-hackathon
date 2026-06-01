@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PWA Santander</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+
+    <script type='text/javascript'>
+      function initEmbeddedMessaging() {
+        try {
+          embeddedservice_bootstrap.settings.language = 'es_MX'; // Ajustado a español de México
+
+          embeddedservice_bootstrap.init(
+            '00Dg500000B7Kev',
+            'Chat_Localhost_PWA',
+            'https://orgfarm-b25ce7f3aa-dev-ed.develop.my.site.com/ESWChatLocalhostPWA1780350993859',
+            {
+              scrt2URL: 'https://orgfarm-b25ce7f3aa-dev-ed.develop.my.salesforce-scrt.com'
+            }
+          );
+        } catch (err) {
+          console.error('Error loading Embedded Messaging: ', err);
+        }
+      };
+    </script>
+    <script type='text/javascript' src='https://orgfarm-b25ce7f3aa-dev-ed.develop.my.site.com/ESWChatLocalhostPWA1780350993859/assets/js/bootstrap.min.js' onload='initEmbeddedMessaging()'></script>
+  </body>
+</html>
