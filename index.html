@@ -1,75 +1,80 @@
-<script type='text/javascript'>
-	function initEmbeddedMessaging() {
-		try {
-			embeddedservice_bootstrap.settings.language = 'en_MX'; // For example, enter 'en' or 'en-MX'
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PWA Banco Santander</title>
+</head>
+<body>
 
-			embeddedservice_bootstrap.init(
-				'00Dg500000B7Kev',
-				'Chat_GitHub_PWA',
-				'https://orgfarm-b25ce7f3aa-dev-ed.develop.my.site.com/ESWChatGitHubPWA1780352056423',
-				{
-					scrt2URL: 'https://orgfarm-b25ce7f3aa-dev-ed.develop.my.salesforce-scrt.com'
-				}
-			);
-		} catch (err) {
-			console.error('Error loading Embedded Messaging: ', err);
-		}
-	};
-</script>
-<!-- Evaluador de Crédito PYME dropzone block -->
-	<div style="max-width: 800px; margin: 40px auto; font-family: sans-serif; text-align: center;">
-		<h2 style="color: #333;">Evaluador de Crédito PYME</h2>
-		<p style="color: #666; margin-bottom: 30px;">Arrastra los 6 estados de cuenta de los últimos meses para evaluar la viabilidad del cliente.</p>
+    <div style="max-width: 800px; margin: 40px auto; font-family: sans-serif; text-align: center;">
+        <h2 style="color: #333;">Evaluador de Crédito PYME</h2>
+        <p style="color: #666; margin-bottom: 30px;">Arrastra los 6 estados de cuenta de los últimos meses para evaluar la viabilidad del cliente.</p>
 
-		<div id="drop-zone" style="border: 3px dashed #EC0000; padding: 60px 20px; border-radius: 12px; background-color: #f9f9f9; transition: all 0.3s ease;">
-			<h3 id="drop-text" style="color: #555; margin: 0;">📁 Suelta tus 6 archivos PDF aquí...</h3>
-		</div>
+        <div id="drop-zone" style="border: 3px dashed #EC0000; padding: 60px 20px; border-radius: 12px; background-color: #f9f9f9; transition: all 0.3s ease;">
+            <h3 id="drop-text" style="color: #555; margin: 0;">📁 Suelta tus 6 archivos PDF aquí...</h3>
+        </div>
 
-		<div id="resultado" style="margin-top: 30px; padding: 25px; display: none; border-radius: 8px; border: 1px solid #ccc;"></div>
-	</div>
+        <div id="resultado" style="margin-top: 30px; padding: 25px; display: none; border-radius: 8px; border: 1px solid #ccc;"></div>
+    </div>
 
-	<script>
-		const dropZone = document.getElementById('drop-zone');
-		const dropText = document.getElementById('drop-text');
-		const resultado = document.getElementById('resultado');
+    <script>
+        const dropZone = document.getElementById('drop-zone');
+        const dropText = document.getElementById('drop-text');
+        const resultado = document.getElementById('resultado');
 
-		// Efectos visuales cuando el archivo pasa por encima
-		['dragenter', 'dragover'].forEach(evento => {
-			dropZone.addEventListener(evento, (e) => {
-				e.preventDefault();
-				dropZone.style.backgroundColor = '#ffe6e6';
-				dropZone.style.borderColor = '#cc0000';
-			});
-		});
+        ['dragenter', 'dragover'].forEach(evento => {
+            dropZone.addEventListener(evento, (e) => {
+                e.preventDefault();
+                dropZone.style.backgroundColor = '#ffe6e6';
+                dropZone.style.borderColor = '#cc0000';
+            });
+        });
 
-		// Efectos cuando el archivo sale o se suelta
-		['dragleave', 'drop'].forEach(evento => {
-			dropZone.addEventListener(evento, (e) => {
-				e.preventDefault();
-				dropZone.style.backgroundColor = '#f9f9f9';
-				dropZone.style.borderColor = '#EC0000';
-			});
-		});
+        ['dragleave', 'drop'].forEach(evento => {
+            dropZone.addEventListener(evento, (e) => {
+                e.preventDefault();
+                dropZone.style.backgroundColor = '#f9f9f9';
+                dropZone.style.borderColor = '#EC0000';
+            });
+        });
 
-		// Capturar los archivos soltados
-		dropZone.addEventListener('drop', (e) => {
-			// Convertimos la lista de archivos a un Array real
-			const files = Array.from(e.dataTransfer.files);
+        dropZone.addEventListener('drop', (e) => {
+            const files = Array.from(e.dataTransfer.files);
 
-			// Filtro de seguridad: ¡Tienen que ser 6!
-			if (files.length !== 6) {
-				alert(`⚠️ El protocolo exige 6 estados de cuenta. Has subido ${files.length}.`);
-				return;
-			}
+            if (files.length !== 6) {
+                alert(`⚠️ El protocolo exige 6 estados de cuenta. Has subido ${files.length}.`);
+                return;
+            }
 
-			// Animación de carga simulada
-			dropText.innerHTML = `✅ 6 archivos recibidos. <br><span style="font-size: 16px; color: #EC0000;">Procesando datos financieros... ⏳</span>`;
+            dropText.innerHTML = `✅ 6 archivos recibidos. <br><span style="font-size: 16px; color: #EC0000;">Procesando datos financieros... ⏳</span>`;
             
-			setTimeout(() => {
-				resultado.style.display = 'block';
-				resultado.innerHTML = `<h3>🚀 Interfaz Lista</h3><p>Aquí inyectaremos el JSON y el algoritmo matemático mañana.</p>`;
-			}, 1500);
-		});
-	</script>
+            setTimeout(() => {
+                resultado.style.display = 'block';
+                resultado.innerHTML = `<h3>🚀 Interfaz Lista</h3><p>Aquí inyectaremos el JSON y el algoritmo matemático mañana.</p>`;
+            }, 1500);
+        });
+    </script>
 
-<script type='text/javascript' src='https://orgfarm-b25ce7f3aa-dev-ed.develop.my.site.com/ESWChatGitHubPWA1780352056423/assets/js/bootstrap.min.js' onload='initEmbeddedMessaging()'></script>
+    <script type='text/javascript'>
+        function initEmbeddedMessaging() {
+            try {
+                embeddedservice_bootstrap.settings.language = 'es_MX'; // Corregido a es_MX
+
+                embeddedservice_bootstrap.init(
+                    '00Dg500000B7Kev',
+                    'Chat_GitHub_PWA',
+                    'https://orgfarm-b25ce7f3aa-dev-ed.develop.my.site.com/ESWChatGitHubPWA1780352056423',
+                    {
+                        scrt2URL: 'https://orgfarm-b25ce7f3aa-dev-ed.develop.my.salesforce-scrt.com'
+                    }
+                );
+            } catch (err) {
+                console.error('Error loading Embedded Messaging: ', err);
+            }
+        };
+    </script>
+    <script type='text/javascript' src='https://orgfarm-b25ce7f3aa-dev-ed.develop.my.site.com/ESWChatGitHubPWA1780352056423/assets/js/bootstrap.min.js' onload='initEmbeddedMessaging()'></script>
+
+</body>
+</html>
