@@ -1,0 +1,15 @@
+{
+  "name": "Evaluador PYME Santander",
+  "short_name": "PYME Santander",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#EC0000",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2830/2830284.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
