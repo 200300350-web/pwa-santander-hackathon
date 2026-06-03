@@ -25,52 +25,50 @@
         const dropText = document.getElementById('drop-text');
         const resultado = document.getElementById('resultado');
 
-        // 1. Mock de datos simulando la extracción de los 6 PDFs
-        const estadosDeCuentaMock = [
-            { mes: 'Mes 1', ingresos: 45000, egresos: 30000 },
-            { mes: 'Mes 2', ingresos: 48000, egresos: 32000 },
-            { mes: 'Mes 3', ingresos: 42000, egresos: 29000 },
-            { mes: 'Mes 4', ingresos: 50000, egresos: 35000 },
-            { mes: 'Mes 5', ingresos: 47000, egresos: 31000 },
-            { mes: 'Mes 6', ingresos: 46000, egresos: 33000 }
-        ];
+        // 1. Motor Dinámico de Análisis (Simulación de lectura OCR de PDFs)
+        const extraerDatosDePDFs = () => {
+            let ingresosTotales = 0;
+            let egresosTotales = 0;
 
-        // 2. Lógica de evaluación financiera optimizada
-        const evaluarViabilidad = (datos) => {
-            const totales = datos.reduce((acc, mes) => {
-                acc.ingresos += mes.ingresos;
-                acc.egresos += mes.egresos;
-                return acc;
-            }, { ingresos: 0, egresos: 0 });
+            // Iteramos 6 veces simulando la extracción de los 6 documentos
+            for (let i = 1; i <= 6; i++) {
+                // Generamos ingresos entre $40,000 y $90,000 por mes
+                const ingresosMensuales = Math.floor(Math.random() * (90000 - 40000 + 1)) + 40000; 
+                // Generamos egresos entre $20,000 y $85,000 por mes (para forzar variabilidad de riesgo)
+                const egresosMensuales = Math.floor(Math.random() * (85000 - 20000 + 1)) + 20000; 
+                
+                ingresosTotales += ingresosMensuales;
+                egresosTotales += egresosMensuales;
+            }
 
-            const porcentajeGasto = (totales.egresos / totales.ingresos) * 100;
-            const esViable = porcentajeGasto <= 70; // Regla de negocio: Max 70% de endeudamiento
+            // Calculamos la viabilidad financiera total
+            const porcentajeGasto = (egresosTotales / ingresosTotales) * 100;
+            const esViable = porcentajeGasto <= 70; // Límite estricto del 70%
 
             return {
                 porcentaje: porcentajeGasto.toFixed(1),
                 viable: esViable,
-                ...totales // Spread operator para pasar los ingresos y egresos
+                ingresos: ingresosTotales,
+                egresos: egresosTotales
             };
         };
 
-        // 3. Eventos visuales de la zona de arrastre
+        // 2. Eventos visuales de la zona de arrastre
         ['dragenter', 'dragover'].forEach(evento => {
             dropZone.addEventListener(evento, (e) => {
                 e.preventDefault();
-                dropZone.style.backgroundColor = '#ffe6e6';
-                dropZone.style.borderColor = '#cc0000';
+                dropZone.classList.add('active'); 
             });
         });
 
         ['dragleave', 'drop'].forEach(evento => {
             dropZone.addEventListener(evento, (e) => {
                 e.preventDefault();
-                dropZone.style.backgroundColor = '#f9f9f9';
-                dropZone.style.borderColor = '#EC0000';
+                dropZone.classList.remove('active'); 
             });
         });
 
-        // 4. Captura de archivos y ejecución del dictamen
+        // 3. Captura de archivos y dictamen dinámico
         dropZone.addEventListener('drop', (e) => {
             const files = Array.from(e.dataTransfer.files);
 
@@ -79,42 +77,37 @@
                 return;
             }
 
-            dropText.innerHTML = `✅ 6 archivos recibidos. <br><span style="font-size: 16px; color: #EC0000;">Extrayendo y procesando datos con el motor de riesgo... ⏳</span>`;
+            dropText.innerHTML = `✅ 6 archivos recibidos. <br><span style="font-size: 16px; color: #EC0000; font-weight: normal; margin-top: 10px; display: inline-block;">Extrayendo datos de los PDFs... ⏳</span>`;
             
-            // Simulamos el tiempo de lectura de los PDFs y ejecutamos el algoritmo
+            // Suspenso falso de 1.5 segundos para que parezca que la IA está procesando el texto
             setTimeout(() => {
-                const dictamen = evaluarViabilidad(estadosDeCuentaMock);
+                const dictamen = extraerDatosDePDFs(); // Ejecutamos el motor dinámico
                 
                 resultado.style.display = 'block';
+                resultado.className = 'resultado-card ' + (dictamen.viable ? 'aprobado' : 'rechazado');
                 
-                // Renderizado dinámico según el dictamen
                 if(dictamen.viable) {
-                    resultado.style.backgroundColor = '#e6ffe6';
-                    resultado.style.borderColor = '#00cc00';
                     resultado.innerHTML = `
-                        <h3 style="color: #00cc00;">✅ Crédito PYME Factible</h3>
+                        <h3>✅ Crédito PYME Factible</h3>
                         <p><strong>Nivel de Endeudamiento:</strong> ${dictamen.porcentaje}% (Límite 70%)</p>
                         <p><strong>Ingresos Semestrales:</strong> $${dictamen.ingresos.toLocaleString()}</p>
                         <p><strong>Egresos Semestrales:</strong> $${dictamen.egresos.toLocaleString()}</p>
-                        <hr style="border: 0; border-top: 1px solid #ccc; margin: 15px 0;">
-                        <p style="font-size: 14px; color: #555;">Acción: Inicia la conversación en el chat de Salesforce para comunicar la aprobación al cliente.</p>
+                        <hr>
+                        <p class="instruccion-final">Acción: El cliente es candidato. Procede a comunicarlo y generar el esquema de pagos.</p>
                     `;
                 } else {
-                    resultado.style.backgroundColor = '#ffe6e6';
-                    resultado.style.borderColor = '#cc0000';
                     resultado.innerHTML = `
-                        <h3 style="color: #cc0000;">⚠️ Riesgo Alto - Crédito Rechazado</h3>
+                        <h3>⚠️ Riesgo Alto - Crédito Rechazado</h3>
                         <p><strong>Nivel de Endeudamiento:</strong> ${dictamen.porcentaje}% (Supera el límite del 70%)</p>
                         <p><strong>Ingresos Semestrales:</strong> $${dictamen.ingresos.toLocaleString()}</p>
                         <p><strong>Egresos Semestrales:</strong> $${dictamen.egresos.toLocaleString()}</p>
-                        <hr style="border: 0; border-top: 1px solid #ccc; margin: 15px 0;">
-                        <p style="font-size: 14px; color: #555;">Acción: Inicia la conversación en el chat de Salesforce para notificar la declinación.</p>
+                        <hr>
+                        <p class="instruccion-final">Acción: Nivel de deuda riesgoso. Notificar declinación por políticas del banco.</p>
                     `;
                 }
                 
-                // Reiniciamos la caja por si quieren subir más PDFs
                 dropText.innerHTML = `📁 Soltar nuevos estados de cuenta...`;
-            }, 2000); // 2 segundos de suspenso falso
+            }, 1500);
         });
     </script>
 
@@ -136,7 +129,6 @@
             }
         };
     </script>
-</script>
 
     <script>
         if ('serviceWorker' in navigator) {
