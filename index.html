@@ -7,43 +7,147 @@
     <link rel="manifest" href="./manifest.json">
     <meta name="theme-color" content="#EC0000">
 </head>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PWA Banco Santander</title>
+    <link rel="manifest" href="./manifest.json">
+    
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f6f8;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .app-container {
+            background-color: #ffffff;
+            max-width: 800px;
+            width: 100%;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            padding: 50px 40px;
+            text-align: center;
+        }
+
+        h2 { color: #EC0000; font-size: 28px; font-weight: 700; margin-bottom: 10px; }
+        .subtitle { color: #666; margin-bottom: 40px; font-size: 16px; }
+
+        .drop-zone {
+            border: 3px dashed #EC0000;
+            padding: 60px 20px;
+            border-radius: 12px;
+            background-color: #fafafa;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .drop-zone.active {
+            background-color: #ffe6e6;
+            border-color: #cc0000;
+            transform: scale(1.02);
+        }
+
+        .drop-zone h3 { color: #555; font-size: 18px; font-weight: 500; pointer-events: none; }
+
+        .resultado-card {
+            margin-top: 30px;
+            padding: 25px 30px;
+            display: none;
+            border-radius: 12px;
+            text-align: left;
+            animation: slideUp 0.5s ease;
+        }
+
+        .resultado-card.aprobado { background-color: #f0fdf4; border: 1px solid #bbf7d0; }
+        .resultado-card.rechazado { background-color: #fef2f2; border: 1px solid #fecaca; }
+
+        .resultado-card h3 { margin-bottom: 15px; font-size: 22px; }
+        .aprobado h3 { color: #16a34a; }
+        .rechazado h3 { color: #dc2626; }
+
+        .resultado-card p { margin-bottom: 10px; font-size: 15px; color: #444; }
+        .resultado-card hr { border: 0; border-top: 1px solid rgba(0,0,0,0.1); margin: 20px 0; }
+        .instruccion-final { font-size: 14px; color: #666; font-style: italic; }
+
+        /* Botón de Emergencia Salesforce */
+        .chat-flotante {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #1a1a1a;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 28px;
+            cursor: pointer;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+            z-index: 1000;
+        }
+
+        .chat-flotante:hover {
+            transform: scale(1.1);
+            background-color: #EC0000; /* Efecto hover en rojo Santander */
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
 <body>
 
-    <div style="max-width: 800px; margin: 40px auto; font-family: sans-serif; text-align: center;">
-        <h2 style="color: #333;">Evaluador de Crédito PYME</h2>
-        <p style="color: #666; margin-bottom: 30px;">Arrastra los 6 estados de cuenta de los últimos meses para evaluar la viabilidad del cliente.</p>
+    <div class="app-container">
+        <h2>Evaluador de Crédito PYME</h2>
+        <p class="subtitle">Arrastra los 6 estados de cuenta de los últimos meses para evaluar la viabilidad del cliente.</p>
 
-        <div id="drop-zone" style="border: 3px dashed #EC0000; padding: 60px 20px; border-radius: 12px; background-color: #f9f9f9; transition: all 0.3s ease;">
-            <h3 id="drop-text" style="color: #555; margin: 0;">📁 Suelta tus 6 archivos PDF aquí...</h3>
+        <div id="drop-zone" class="drop-zone">
+            <h3 id="drop-text">📁 Suelta tus 6 archivos PDF aquí...</h3>
         </div>
 
-        <div id="resultado" style="margin-top: 30px; padding: 25px; display: none; border-radius: 8px; border: 1px solid #ccc;"></div>
+        <div id="resultado" class="resultado-card"></div>
     </div>
+
+    <button class="chat-flotante" onclick="abrirChat()" title="Hablar con Ejecutivo">💬</button>
 
     <script>
         const dropZone = document.getElementById('drop-zone');
         const dropText = document.getElementById('drop-text');
         const resultado = document.getElementById('resultado');
 
-        // 1. Motor Dinámico de Análisis (Simulación de lectura OCR de PDFs)
+        // Función para abrir el chat en pestaña segura
+        function abrirChat() {
+            window.open('https://orgfarm-b25ce7f3aa-dev-ed.develop.my.site.com/ESWChatGitHubPWA1780352056423', '_blank');
+        }
+
         const extraerDatosDePDFs = () => {
             let ingresosTotales = 0;
             let egresosTotales = 0;
 
-            // Iteramos 6 veces simulando la extracción de los 6 documentos
             for (let i = 1; i <= 6; i++) {
-                // Generamos ingresos entre $40,000 y $90,000 por mes
                 const ingresosMensuales = Math.floor(Math.random() * (90000 - 40000 + 1)) + 40000; 
-                // Generamos egresos entre $20,000 y $85,000 por mes (para forzar variabilidad de riesgo)
                 const egresosMensuales = Math.floor(Math.random() * (85000 - 20000 + 1)) + 20000; 
                 
                 ingresosTotales += ingresosMensuales;
                 egresosTotales += egresosMensuales;
             }
 
-            // Calculamos la viabilidad financiera total
             const porcentajeGasto = (egresosTotales / ingresosTotales) * 100;
-            const esViable = porcentajeGasto <= 70; // Límite estricto del 70%
+            const esViable = porcentajeGasto <= 70;
 
             return {
                 porcentaje: porcentajeGasto.toFixed(1),
@@ -53,7 +157,6 @@
             };
         };
 
-        // 2. Eventos visuales de la zona de arrastre
         ['dragenter', 'dragover'].forEach(evento => {
             dropZone.addEventListener(evento, (e) => {
                 e.preventDefault();
@@ -68,7 +171,6 @@
             });
         });
 
-        // 3. Captura de archivos y dictamen dinámico
         dropZone.addEventListener('drop', (e) => {
             const files = Array.from(e.dataTransfer.files);
 
@@ -79,9 +181,8 @@
 
             dropText.innerHTML = `✅ 6 archivos recibidos. <br><span style="font-size: 16px; color: #EC0000; font-weight: normal; margin-top: 10px; display: inline-block;">Extrayendo datos de los PDFs... ⏳</span>`;
             
-            // Suspenso falso de 1.5 segundos para que parezca que la IA está procesando el texto
             setTimeout(() => {
-                const dictamen = extraerDatosDePDFs(); // Ejecutamos el motor dinámico
+                const dictamen = extraerDatosDePDFs();
                 
                 resultado.style.display = 'block';
                 resultado.className = 'resultado-card ' + (dictamen.viable ? 'aprobado' : 'rechazado');
@@ -93,8 +194,34 @@
                         <p><strong>Ingresos Semestrales:</strong> $${dictamen.ingresos.toLocaleString()}</p>
                         <p><strong>Egresos Semestrales:</strong> $${dictamen.egresos.toLocaleString()}</p>
                         <hr>
-                        <p class="instruccion-final">Acción: El cliente es candidato. Procede a comunicarlo y generar el esquema de pagos.</p>
+                        <p class="instruccion-final">Acción: El cliente es candidato. Haz clic en el botón inferior para abrir el chat de Salesforce e iniciar la negociación.</p>
                     `;
+                } else {
+                    resultado.innerHTML = `
+                        <h3>⚠️ Riesgo Alto - Crédito Rechazado</h3>
+                        <p><strong>Nivel de Endeudamiento:</strong> ${dictamen.porcentaje}% (Supera el límite del 70%)</p>
+                        <p><strong>Ingresos Semestrales:</strong> $${dictamen.ingresos.toLocaleString()}</p>
+                        <p><strong>Egresos Semestrales:</strong> $${dictamen.egresos.toLocaleString()}</p>
+                        <hr>
+                        <p class="instruccion-final">Acción: Nivel de deuda riesgoso. Haz clic en el botón inferior para notificar la declinación.</p>
+                    `;
+                }
+                
+                dropText.innerHTML = `📁 Soltar nuevos estados de cuenta...`;
+            }, 1500);
+        });
+
+        // Registro de Service Worker (PWA)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('✅ Service Worker registrado', reg))
+                    .catch(err => console.log('⚠️ Error en Service Worker', err));
+            });
+        }
+    </script>
+</body>
+</html>
                 } else {
                     resultado.innerHTML = `
                         <h3>⚠️ Riesgo Alto - Crédito Rechazado</h3>
