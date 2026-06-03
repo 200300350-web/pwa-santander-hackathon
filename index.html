@@ -5,108 +5,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PWA Banco Santander</title>
     <link rel="manifest" href="./manifest.json">
-    <meta name="theme-color" content="#EC0000">
-</head>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PWA Banco Santander</title>
-    <link rel="manifest" href="./manifest.json">
     
     <style>
+        /* RESET Y DISEÑO BASE */
         * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f4f6f8;
-            color: #333;
-            display: flex;
-            justify-content: center;
-            padding: 40px 20px;
-        }
-
-        .app-container {
-            background-color: #ffffff;
-            max-width: 800px;
-            width: 100%;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-            padding: 50px 40px;
-            text-align: center;
-        }
-
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f4f6f8; color: #333; display: flex; justify-content: center; padding: 40px 20px; }
+        .app-container { background-color: #ffffff; max-width: 800px; width: 100%; border-radius: 16px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); padding: 50px 40px; text-align: center; position: relative; }
         h2 { color: #EC0000; font-size: 28px; font-weight: 700; margin-bottom: 10px; }
         .subtitle { color: #666; margin-bottom: 40px; font-size: 16px; }
 
-        .drop-zone {
-            border: 3px dashed #EC0000;
-            padding: 60px 20px;
-            border-radius: 12px;
-            background-color: #fafafa;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .drop-zone.active {
-            background-color: #ffe6e6;
-            border-color: #cc0000;
-            transform: scale(1.02);
-        }
-
+        /* ZONA DRAG & DROP */
+        .drop-zone { border: 3px dashed #EC0000; padding: 60px 20px; border-radius: 12px; background-color: #fafafa; cursor: pointer; transition: all 0.3s ease; }
+        .drop-zone.active { background-color: #ffe6e6; border-color: #cc0000; transform: scale(1.02); }
         .drop-zone h3 { color: #555; font-size: 18px; font-weight: 500; pointer-events: none; }
 
-        .resultado-card {
-            margin-top: 30px;
-            padding: 25px 30px;
-            display: none;
-            border-radius: 12px;
-            text-align: left;
-            animation: slideUp 0.5s ease;
-        }
-
+        /* TARJETA DE RESULTADOS */
+        .resultado-card { margin-top: 30px; padding: 25px 30px; display: none; border-radius: 12px; text-align: left; animation: slideUp 0.5s ease; }
         .resultado-card.aprobado { background-color: #f0fdf4; border: 1px solid #bbf7d0; }
         .resultado-card.rechazado { background-color: #fef2f2; border: 1px solid #fecaca; }
-
         .resultado-card h3 { margin-bottom: 15px; font-size: 22px; }
         .aprobado h3 { color: #16a34a; }
         .rechazado h3 { color: #dc2626; }
-
         .resultado-card p { margin-bottom: 10px; font-size: 15px; color: #444; }
         .resultado-card hr { border: 0; border-top: 1px solid rgba(0,0,0,0.1); margin: 20px 0; }
-        .instruccion-final { font-size: 14px; color: #666; font-style: italic; }
+        .instruccion-final { font-size: 14px; color: #666; font-style: italic; font-weight: bold;}
 
-        /* Botón de Emergencia Salesforce */
-        .chat-flotante {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: #1a1a1a;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            font-size: 28px;
-            cursor: pointer;
-            box-shadow: 0 6px 16px rgba(0,0,0,0.3);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: transform 0.2s ease, background-color 0.2s ease;
-            z-index: 1000;
-        }
+        /* MODAL DE CHAT SIMULADO (EL AS BAJO LA MANGA) */
+        .chat-flotante { position: fixed; bottom: 20px; right: 20px; background-color: #333; color: white; border: none; border-radius: 50%; width: 60px; height: 60px; font-size: 28px; cursor: pointer; box-shadow: 0 6px 16px rgba(0,0,0,0.3); z-index: 1000; transition: transform 0.2s; }
+        .chat-flotante:hover { transform: scale(1.1); background-color: #EC0000; }
+        
+        .chat-modal { display: none; position: fixed; bottom: 90px; right: 20px; width: 350px; background: #fff; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); overflow: hidden; z-index: 1001; animation: slideUp 0.3s ease; border: 1px solid #e0e0e0; }
+        .chat-header { background: #EC0000; color: white; padding: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+        .cerrar-chat { background: none; border: none; color: white; font-size: 18px; cursor: pointer; }
+        .chat-body { padding: 20px; height: 300px; overflow-y: auto; background: #f9f9f9; display: flex; flex-direction: column; gap: 10px;}
+        
+        .burbuja { padding: 12px 16px; border-radius: 12px; font-size: 14px; line-height: 1.4; width: 85%; }
+        .agente { background: #e0f2fe; color: #0369a1; border-bottom-left-radius: 2px; align-self: flex-start; }
+        .sistema { background: #fce7f3; color: #be185d; font-size: 12px; text-align: center; width: 100%; align-self: center; margin: 10px 0;}
 
-        .chat-flotante:hover {
-            transform: scale(1.1);
-            background-color: #EC0000; /* Efecto hover en rojo Santander */
-        }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -122,68 +59,60 @@
         <div id="resultado" class="resultado-card"></div>
     </div>
 
+    <!-- BOTÓN Y MODAL DE CHAT -->
     <button class="chat-flotante" onclick="abrirChat()" title="Hablar con Ejecutivo">💬</button>
+
+    <div id="chat-modal" class="chat-modal">
+        <div class="chat-header">
+            <span>🔴 Ejecutivo Santander</span>
+            <button class="cerrar-chat" onclick="cerrarChat()">✖</button>
+        </div>
+        <div class="chat-body">
+            <div class="sistema">Conexión segura establecida.</div>
+            <div class="burbuja agente">¡Hola! He recibido el análisis automático del sistema. Veo que el perfil de la PYME es factible para el crédito. ✅</div>
+            <div class="burbuja agente">Podemos pasarlo a negociación inmediatamente. Si el cliente desea hacer aportaciones para disminuir a capital, el sistema ya generó el formato de amortización para calcular en cuánto tiempo saldaría la cuenta.</div>
+            <div class="burbuja agente">¿Procedo a enviarle la propuesta por correo?</div>
+        </div>
+    </div>
 
     <script>
         const dropZone = document.getElementById('drop-zone');
         const dropText = document.getElementById('drop-text');
         const resultado = document.getElementById('resultado');
+        const chatModal = document.getElementById('chat-modal');
 
-        // Función para abrir el chat en pestaña segura
-        function abrirChat() {
-            window.open('https://orgfarm-b25ce7f3aa-dev-ed.develop.my.site.com/ESWChatGitHubPWA1780352056423', '_blank');
-        }
+        // Control del Chat
+        function abrirChat() { chatModal.style.display = 'block'; }
+        function cerrarChat() { chatModal.style.display = 'none'; }
 
+        // Motor Dinámico
         const extraerDatosDePDFs = () => {
             let ingresosTotales = 0;
             let egresosTotales = 0;
 
             for (let i = 1; i <= 6; i++) {
-                const ingresosMensuales = Math.floor(Math.random() * (90000 - 40000 + 1)) + 40000; 
-                const egresosMensuales = Math.floor(Math.random() * (85000 - 20000 + 1)) + 20000; 
-                
-                ingresosTotales += ingresosMensuales;
-                egresosTotales += egresosMensuales;
+                ingresosTotales += Math.floor(Math.random() * (90000 - 40000 + 1)) + 40000; 
+                egresosTotales += Math.floor(Math.random() * (85000 - 20000 + 1)) + 20000; 
             }
 
             const porcentajeGasto = (egresosTotales / ingresosTotales) * 100;
             const esViable = porcentajeGasto <= 70;
 
-            return {
-                porcentaje: porcentajeGasto.toFixed(1),
-                viable: esViable,
-                ingresos: ingresosTotales,
-                egresos: egresosTotales
-            };
+            return { porcentaje: porcentajeGasto.toFixed(1), viable: esViable, ingresos: ingresosTotales, egresos: egresosTotales };
         };
 
-        ['dragenter', 'dragover'].forEach(evento => {
-            dropZone.addEventListener(evento, (e) => {
-                e.preventDefault();
-                dropZone.classList.add('active'); 
-            });
-        });
-
-        ['dragleave', 'drop'].forEach(evento => {
-            dropZone.addEventListener(evento, (e) => {
-                e.preventDefault();
-                dropZone.classList.remove('active'); 
-            });
-        });
+        // Eventos Drag & Drop
+        ['dragenter', 'dragover'].forEach(evento => { dropZone.addEventListener(evento, (e) => { e.preventDefault(); dropZone.classList.add('active'); }); });
+        ['dragleave', 'drop'].forEach(evento => { dropZone.addEventListener(evento, (e) => { e.preventDefault(); dropZone.classList.remove('active'); }); });
 
         dropZone.addEventListener('drop', (e) => {
             const files = Array.from(e.dataTransfer.files);
+            if (files.length !== 6) { alert(`⚠️ El protocolo exige 6 estados de cuenta.`); return; }
 
-            if (files.length !== 6) {
-                alert(`⚠️ El protocolo exige 6 estados de cuenta. Has subido ${files.length}.`);
-                return;
-            }
-
-            dropText.innerHTML = `✅ 6 archivos recibidos. <br><span style="font-size: 16px; color: #EC0000; font-weight: normal; margin-top: 10px; display: inline-block;">Extrayendo datos de los PDFs... ⏳</span>`;
+            dropText.innerHTML = `✅ 6 archivos recibidos. <br><span style="font-size: 16px; color: #EC0000; font-weight: normal; margin-top: 10px; display: inline-block;">Procesando motor de riesgo... ⏳</span>`;
             
             setTimeout(() => {
                 const dictamen = extraerDatosDePDFs();
-                
                 resultado.style.display = 'block';
                 resultado.className = 'resultado-card ' + (dictamen.viable ? 'aprobado' : 'rechazado');
                 
@@ -194,78 +123,26 @@
                         <p><strong>Ingresos Semestrales:</strong> $${dictamen.ingresos.toLocaleString()}</p>
                         <p><strong>Egresos Semestrales:</strong> $${dictamen.egresos.toLocaleString()}</p>
                         <hr>
-                        <p class="instruccion-final">Acción: El cliente es candidato. Haz clic en el botón inferior para abrir el chat de Salesforce e iniciar la negociación.</p>
+                        <p class="instruccion-final">Acción requerida: Haz clic en el ícono de chat para coordinar la reducción a capital con un ejecutivo.</p>
                     `;
                 } else {
                     resultado.innerHTML = `
                         <h3>⚠️ Riesgo Alto - Crédito Rechazado</h3>
-                        <p><strong>Nivel de Endeudamiento:</strong> ${dictamen.porcentaje}% (Supera el límite del 70%)</p>
+                        <p><strong>Nivel de Endeudamiento:</strong> ${dictamen.porcentaje}% (Supera el 70%)</p>
                         <p><strong>Ingresos Semestrales:</strong> $${dictamen.ingresos.toLocaleString()}</p>
                         <p><strong>Egresos Semestrales:</strong> $${dictamen.egresos.toLocaleString()}</p>
                         <hr>
-                        <p class="instruccion-final">Acción: Nivel de deuda riesgoso. Haz clic en el botón inferior para notificar la declinación.</p>
+                        <p class="instruccion-final">Acción requerida: Notificar declinación por políticas de riesgo.</p>
                     `;
                 }
-                
                 dropText.innerHTML = `📁 Soltar nuevos estados de cuenta...`;
             }, 1500);
         });
 
-        // Registro de Service Worker (PWA)
+        // Registro de PWA
         if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('✅ Service Worker registrado', reg))
-                    .catch(err => console.log('⚠️ Error en Service Worker', err));
-            });
+            window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js'); });
         }
     </script>
-</body>
-</html>
-                } else {
-                    resultado.innerHTML = `
-                        <h3>⚠️ Riesgo Alto - Crédito Rechazado</h3>
-                        <p><strong>Nivel de Endeudamiento:</strong> ${dictamen.porcentaje}% (Supera el límite del 70%)</p>
-                        <p><strong>Ingresos Semestrales:</strong> $${dictamen.ingresos.toLocaleString()}</p>
-                        <p><strong>Egresos Semestrales:</strong> $${dictamen.egresos.toLocaleString()}</p>
-                        <hr>
-                        <p class="instruccion-final">Acción: Nivel de deuda riesgoso. Notificar declinación por políticas del banco.</p>
-                    `;
-                }
-                
-                dropText.innerHTML = `📁 Soltar nuevos estados de cuenta...`;
-            }, 1500);
-        });
-    </script>
-
-    <script type='text/javascript'>
-        function initEmbeddedMessaging() {
-            try {
-                embeddedservice_bootstrap.settings.language = 'es_MX'; // Corregido a es_MX
-
-                embeddedservice_bootstrap.init(
-                    '00Dg500000B7Kev',
-                    'Chat_GitHub_PWA',
-                    'https://orgfarm-b25ce7f3aa-dev-ed.develop.my.site.com/ESWChatGitHubPWA1780352056423',
-                    {
-                        scrt2URL: 'https://orgfarm-b25ce7f3aa-dev-ed.develop.my.salesforce-scrt.com'
-                    }
-                );
-            } catch (err) {
-                console.error('Error loading Embedded Messaging: ', err);
-            }
-        };
-    </script>
-
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('✅ Service Worker registrado', reg))
-                    .catch(err => console.log('⚠️ Error en Service Worker', err));
-            });
-        }
-    </script>
-
 </body>
 </html>
